@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>こぼれん盆 — 汁物ゼロこぼれのトレーシステム</title>
+  <style>
+    :root {
+      --primary: #e8622a;
+      --primary-light: #f5956a;
+      --bg: #faf8f4;
+      --surface: #ffffff;
+      --text: #2d2d2d;
+      --muted: #6b6b6b;
+      --accent: #2a7ae8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(250,248,244,0.92);
+      backdrop-filter: blur(8px);
+      padding: 12px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #e9e4dc;
+    }
+    .logo { font-size: 1.3rem; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
+    .nav-cta {
+      background: var(--primary); color: #fff;
+      border: none; border-radius: 24px;
+      padding: 8px 22px; font-size: 0.9rem; font-weight: 700;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .nav-cta:hover { background: #c9521e; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 90vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 60px 24px 80px;
+      background: linear-gradient(160deg, #fdf6ee 0%, #fff3eb 60%, #faf0e6 100%);
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; bottom: -80px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(232,98,42,0.08) 0%, transparent 70%);
+    }
+    .badge {
+      display: inline-block;
+      background: #fff3eb; border: 1.5px solid #f5b68a;
+      color: var(--primary); border-radius: 20px;
+      padding: 4px 16px; font-size: 0.8rem; font-weight: 700;
+      margin-bottom: 20px; letter-spacing: 0.5px;
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900; line-height: 1.15;
+      letter-spacing: -1px; margin-bottom: 20px;
+    }
+    .hero h1 span { color: var(--primary); }
+    .hero p {
+      font-size: 1.15rem; color: var(--muted);
+      max-width: 520px; margin: 0 auto 36px;
+    }
+    .hero-buttons { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .btn-primary {
+      background: var(--primary); color: #fff;
+      border: none; border-radius: 28px;
+      padding: 14px 32px; font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 20px rgba(232,98,42,0.3);
+    }
+    .btn-primary:hover { background: #c9521e; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,98,42,0.35); }
+    .btn-outline {
+      background: transparent; color: var(--primary);
+      border: 2px solid var(--primary); border-radius: 28px;
+      padding: 12px 28px; font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-outline:hover { background: #fff3eb; }
+
+    /* ── BOWL ANIMATION ── */
+    .demo-area {
+      margin-top: 60px;
+      display: flex; gap: 48px; flex-wrap: wrap; justify-content: center;
+    }
+    .demo-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 28px 24px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.07);
+      width: 220px; text-align: center;
+    }
+    .demo-card .label {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;
+      margin-bottom: 12px; text-transform: uppercase;
+    }
+    .demo-card.bad .label { color: #e84040; }
+    .demo-card.good .label { color: #2ab04b; }
+
+    /* SVG bowl animations */
+    .bowl-svg { width: 140px; height: 100px; }
+
+    /* Spilling animation */
+    @keyframes tilt-bad {
+      0%,100% { transform: rotate(0deg); }
+      25% { transform: rotate(-8deg); }
+      75% { transform: rotate(8deg); }
+    }
+    @keyframes drip {
+      0% { opacity: 0; transform: translateY(0) scaleX(1); }
+      30% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(30px) scaleX(0.6); }
+    }
+    .bad-bowl-group { animation: tilt-bad 2s ease-in-out infinite; transform-origin: center; }
+    .drip1 { animation: drip 2s ease-in 0.5s infinite; }
+    .drip2 { animation: drip 2s ease-in 1.2s infinite; }
+
+    /* Stable animation */
+    @keyframes tilt-good {
+      0%,100% { transform: rotate(0deg); }
+      25% { transform: rotate(-4deg); }
+      75% { transform: rotate(4deg); }
+    }
+    .good-bowl-group { animation: tilt-good 2s ease-in-out infinite; transform-origin: center; }
+
+    /* Liquid wave */
+    @keyframes wave-bad {
+      0%,100% { d: path("M 30 52 Q 55 42 80 52 Q 105 62 130 52"); }
+      50% { d: path("M 30 62 Q 55 48 80 42 Q 105 56 130 42"); }
+    }
+    @keyframes wave-good {
+      0%,100% { d: path("M 40 52 Q 65 49 90 52 Q 115 55 130 52"); }
+      50% { d: path("M 40 51 Q 65 50 90 51 Q 115 52 130 51"); }
+    }
+
+    .demo-desc { font-size: 0.82rem; color: var(--muted); margin-top: 12px; }
+
+    /* ── PROBLEM ── */
+    section { padding: 80px 24px; }
+    .section-title {
+      text-align: center; font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800; margin-bottom: 12px;
+    }
+    .section-sub { text-align: center; color: var(--muted); margin-bottom: 52px; font-size: 1rem; }
+
+    .pains-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px; max-width: 900px; margin: 0 auto;
+    }
+    .pain-card {
+      background: #fff5f5; border: 1.5px solid #fcc8c8;
+      border-radius: 16px; padding: 24px;
+    }
+    .pain-card .icon { font-size: 1.8rem; margin-bottom: 10px; }
+    .pain-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .pain-card p { font-size: 0.87rem; color: var(--muted); }
+
+    /* ── FEATURES ── */
+    .features-section { background: #fff; }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px; max-width: 960px; margin: 0 auto;
+    }
+    .feature-card {
+      border-radius: 20px; padding: 28px 22px; text-align: center;
+      background: var(--bg); border: 1.5px solid #ede9e0;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+    .feature-icon { font-size: 2.4rem; margin-bottom: 14px; }
+    .feature-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 8px; }
+    .feature-card p { font-size: 0.85rem; color: var(--muted); }
+
+    /* ── HOW IT WORKS ── */
+    .how-section { background: linear-gradient(135deg, #fff8f3 0%, #fef2e8 100%); }
+    .steps {
+      display: flex; flex-direction: column; gap: 0;
+      max-width: 680px; margin: 0 auto;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute; left: 27px; top: 24px; bottom: 24px;
+      width: 2px; background: linear-gradient(to bottom, var(--primary-light), var(--primary));
+    }
+    .step {
+      display: flex; align-items: flex-start; gap: 20px;
+      background: #fff; border-radius: 16px; padding: 20px 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+      position: relative;
+    }
+    .step-num {
+      flex-shrink: 0; width: 36px; height: 36px;
+      background: var(--primary); color: #fff;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1rem; position: relative; z-index: 1;
+    }
+    .step-body h4 { font-weight: 700; margin-bottom: 4px; }
+    .step-body p { font-size: 0.87rem; color: var(--muted); }
+
+    /* ── GAINS ── */
+    .gains-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px; max-width: 860px; margin: 0 auto;
+    }
+    .gain-card {
+      background: #f0faf3; border: 1.5px solid #b7e8c4;
+      border-radius: 16px; padding: 22px;
+    }
+    .gain-card .icon { font-size: 1.6rem; margin-bottom: 8px; }
+    .gain-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+    .gain-card p { font-size: 0.83rem; color: #3b7a4e; }
+
+    /* ── TARGET ── */
+    .target-section { background: #fff; }
+    .target-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px; max-width: 760px; margin: 0 auto;
+    }
+    .target-card {
+      border: 2px solid #ede9e0; border-radius: 16px;
+      padding: 24px; text-align: center;
+      transition: border-color 0.2s;
+    }
+    .target-card:hover { border-color: var(--primary); }
+    .target-card .avatar { font-size: 2.8rem; margin-bottom: 10px; }
+    .target-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+    .target-card p { font-size: 0.82rem; color: var(--muted); }
+
+    /* ── CTA ── */
+    .cta-section {
+      background: linear-gradient(135deg, #e8622a 0%, #c94f1a 100%);
+      color: #fff; text-align: center; padding: 80px 24px;
+    }
+    .cta-section h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900; margin-bottom: 16px; }
+    .cta-section p { font-size: 1.05rem; opacity: 0.88; margin-bottom: 36px; max-width: 480px; margin-left: auto; margin-right: auto; }
+    .cta-form {
+      display: flex; gap: 12px; justify-content: center;
+      flex-wrap: wrap; max-width: 460px; margin: 0 auto;
+    }
+    .cta-input {
+      flex: 1; min-width: 220px; padding: 14px 18px;
+      border-radius: 28px; border: none; font-size: 0.95rem;
+      outline: none;
+    }
+    .cta-btn {
+      background: #fff; color: var(--primary);
+      border: none; border-radius: 28px;
+      padding: 14px 28px; font-size: 0.95rem; font-weight: 800;
+      cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .cta-btn:hover { background: #fff3eb; transform: translateY(-2px); }
+    .cta-note { margin-top: 14px; font-size: 0.8rem; opacity: 0.65; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #1e1e1e; color: #888;
+      text-align: center; padding: 28px 24px;
+      font-size: 0.82rem;
+    }
+
+    /* ── Scroll animations ── */
+    .fade-up {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: none; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: #2ab04b; color: #fff; padding: 12px 28px;
+      border-radius: 28px; font-weight: 700; font-size: 0.95rem;
+      opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 999;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">こぼれん盆</div>
+  <button class="nav-cta" onclick="scrollToCta()">事前登録する →</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">🚀 プロトタイプ v1</div>
+  <h1>もう、汁物は<br /><span>こぼれない。</span></h1>
+  <p>家族の食事配膳を変える、ゼロこぼれトレーシステム。<br />子供でも安心、熱い汁物も安定して運べます。</p>
+  <div class="hero-buttons">
+    <button class="btn-primary" onclick="scrollToCta()">無料で事前登録する</button>
+    <button class="btn-outline" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">機能を見る</button>
+  </div>
+
+  <!-- Live demo animation -->
+  <div class="demo-area">
+    <div class="demo-card bad">
+      <div class="label">❌ Before</div>
+      <svg class="bowl-svg" viewBox="0 0 160 90">
+        <g class="bad-bowl-group">
+          <!-- tray -->
+          <rect x="10" y="70" width="140" height="10" rx="4" fill="#d4a875"/>
+          <!-- bowl -->
+          <ellipse cx="80" cy="60" rx="44" ry="12" fill="#c9906a"/>
+          <path d="M 36 58 Q 80 90 124 58" fill="#e8b07a"/>
+          <!-- liquid surface -->
+          <clipPath id="bowl-clip-bad">
+            <path d="M 36 58 Q 80 90 124 58 L 124 58 Q 80 80 36 58 Z"/>
+          </clipPath>
+          <ellipse cx="80" cy="55" rx="38" ry="8" fill="#c84a2a" opacity="0.85" clip-path="url(#bowl-clip-bad)"/>
+          <!-- spill drops -->
+          <circle class="drip1" cx="30" cy="55" r="4" fill="#c84a2a" opacity="0.9"/>
+          <circle class="drip2" cx="130" cy="52" r="3" fill="#c84a2a" opacity="0.9"/>
+          <!-- steam -->
+          <path d="M 65 44 Q 68 38 65 32" stroke="#e8a07a" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
+          <path d="M 80 42 Q 83 36 80 30" stroke="#e8a07a" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
+          <path d="M 95 44 Q 98 38 95 32" stroke="#e8a07a" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
+        </g>
+      </svg>
+      <div class="demo-desc">歩くたびに汁が波打ち<br />トレーがびしょびしょに…</div>
+    </div>
+
+    <div style="display:flex;align-items:center;font-size:2rem;color:#e8622a;font-weight:900;">→</div>
+
+    <div class="demo-card good">
+      <div class="label">✅ After</div>
+      <svg class="bowl-svg" viewBox="0 0 160 90">
+        <g class="good-bowl-group">
+          <!-- tray with grip texture -->
+          <rect x="10" y="70" width="140" height="10" rx="4" fill="#8b6340"/>
+          <rect x="20" y="71" width="6" height="8" rx="2" fill="#7a5430" opacity="0.5"/>
+          <rect x="34" y="71" width="6" height="8" rx="2" fill="#7a5430" opacity="0.5"/>
+          <rect x="48" y="71" width="6" height="8" rx="2" fill="#7a5430" opacity="0.5"/>
+          <!-- bowl fixed ring -->
+          <circle cx="80" cy="65" r="46" fill="none" stroke="#e8622a" stroke-width="2.5" stroke-dasharray="4 4" opacity="0.4"/>
+          <!-- bowl -->
+          <ellipse cx="80" cy="60" rx="44" ry="12" fill="#c9906a"/>
+          <path d="M 36 58 Q 80 90 124 58" fill="#e8b07a"/>
+          <!-- stable liquid -->
+          <clipPath id="bowl-clip-good">
+            <path d="M 36 58 Q 80 90 124 58 L 124 58 Q 80 80 36 58 Z"/>
+          </clipPath>
+          <ellipse cx="80" cy="56" rx="38" ry="6" fill="#c84a2a" opacity="0.85" clip-path="url(#bowl-clip-good)"/>
+          <!-- check mark -->
+          <circle cx="120" cy="28" r="12" fill="#2ab04b"/>
+          <path d="M 114 28 L 118 33 L 126 23" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- steam (calm) -->
+          <path d="M 72 44 Q 74 40 72 36" stroke="#e8a07a" stroke-width="1.5" fill="none" opacity="0.4" stroke-linecap="round"/>
+          <path d="M 80 42 Q 82 38 80 34" stroke="#e8a07a" stroke-width="1.5" fill="none" opacity="0.4" stroke-linecap="round"/>
+        </g>
+      </svg>
+      <div class="demo-desc">波打ち抑制設計で<br />汁物もピタッと安定！</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section>
+  <div class="section-title fade-up">こんな「あるある」、ありませんか？</div>
+  <div class="section-sub fade-up">毎日の配膳で感じる小さなストレスが積み重なっています</div>
+  <div class="pains-grid">
+    <div class="pain-card fade-up">
+      <div class="icon">🚶</div>
+      <h3>歩くたびにこぼれる</h3>
+      <p>味噌汁を運ぶとき、少し早く歩くだけで汁が波打ってトレーに溢れてしまう。</p>
+    </div>
+    <div class="pain-card fade-up">
+      <div class="icon">🧻</div>
+      <h3>毎回トレーを拭かないといけない</h3>
+      <p>食事前にティッシュや布巾でトレーを拭くのが当たり前になっている。</p>
+    </div>
+    <div class="pain-card fade-up">
+      <div class="icon">👦</div>
+      <h3>子供が手伝えない</h3>
+      <p>「熱いからダメ」「こぼすからダメ」と言って子供に配膳を任せられない。</p>
+    </div>
+    <div class="pain-card fade-up">
+      <div class="icon">👥</div>
+      <h3>人混みで特に怖い</h3>
+      <p>家族や来客が多い食卓への移動は、汁物を持つたびに緊張してしまう。</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div class="section-title fade-up">こぼれん盆 4つの機能</div>
+  <div class="section-sub fade-up">物理的に「こぼれない」を実現する設計</div>
+  <div class="features-grid">
+    <div class="feature-card fade-up">
+      <div class="feature-icon">🧲</div>
+      <h3>器固定リング</h3>
+      <p>器をトレーにぴったりはめ込む溝構造。移動中も絶対にズレません。</p>
+    </div>
+    <div class="feature-card fade-up">
+      <div class="feature-icon">🌊</div>
+      <h3>波打ち抑制ボウル</h3>
+      <p>内壁の特殊形状が液体の共振を抑制。歩いても汁面が安定します。</p>
+    </div>
+    <div class="feature-card fade-up">
+      <div class="feature-icon">🤚</div>
+      <h3>ノンスリップグリップ</h3>
+      <p>トレー裏面と持ち手部分に滑り止め素材を採用。片手でも安心。</p>
+    </div>
+    <div class="feature-card fade-up">
+      <div class="feature-icon">⚖️</div>
+      <h3>低重心バランス設計</h3>
+      <p>器の重心を下げる設計で、傾いても元の位置に戻りやすい。</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="section-title fade-up">使い方はかんたん 3ステップ</div>
+  <div class="section-sub fade-up">いつもの配膳がそのまま「ゼロこぼれ」に</div>
+  <div class="steps">
+    <div class="step fade-up">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>器を固定リングにセット</h4>
+        <p>汁碗を専用トレーのリングにはめ込むだけ。器のサイズに合わせて3段階調整できます。</p>
+      </div>
+    </div>
+    <div class="step fade-up">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>いつも通り持ち上げて運ぶ</h4>
+        <p>ノンスリップグリップで片手でも安定。子供でも自信を持って運べます。</p>
+      </div>
+    </div>
+    <div class="step fade-up">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>きれいなまま食卓へ</h4>
+        <p>トレーを拭く手間なし。そのままテーブルに置けば、気持ちよく食事開始！</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GAINS -->
+<section>
+  <div class="section-title fade-up">使うと、こんな未来が待っています</div>
+  <div class="section-sub fade-up">Gains — あなたが手に入れるもの</div>
+  <div class="gains-grid">
+    <div class="gain-card fade-up">
+      <div class="icon">😊</div>
+      <h3>配膳が楽しくなる</h3>
+      <p>「こぼすかも」のドキドキがなくなり、食事の準備が気分よくできます。</p>
+    </div>
+    <div class="gain-card fade-up">
+      <div class="icon">👧</div>
+      <h3>子供が自信を持てる</h3>
+      <p>子供も「私が運んだ！」という達成感。家族のお手伝いが増えます。</p>
+    </div>
+    <div class="gain-card fade-up">
+      <div class="icon">✨</div>
+      <h3>きれいな食卓で食事開始</h3>
+      <p>拭く手間ゼロ。きれいなトレーのまま食卓に並べられます。</p>
+    </div>
+    <div class="gain-card fade-up">
+      <div class="icon">🔥</div>
+      <h3>熱いものも安心</h3>
+      <p>グリップが熱を遮断。熱々の汁物も落ち着いて運べます。</p>
+    </div>
+  </div>
+</section>
+
+<!-- TARGET -->
+<section class="target-section">
+  <div class="section-title fade-up">こんな方に</div>
+  <div class="section-sub fade-up">毎日の「ちょっとしたストレス」を解消したい人へ</div>
+  <div class="target-grid">
+    <div class="target-card fade-up">
+      <div class="avatar">👨‍👩‍👧‍👦</div>
+      <h3>子育て中のご家庭</h3>
+      <p>子供が配膳を手伝える家族の食卓に</p>
+    </div>
+    <div class="target-card fade-up">
+      <div class="avatar">👴</div>
+      <h3>高齢の方・介護</h3>
+      <p>片手でも安定、安全に運べるシニアの食事に</p>
+    </div>
+    <div class="target-card fade-up">
+      <div class="avatar">🏠</div>
+      <h3>毎日料理する方</h3>
+      <p>毎回のストレスをなくして、料理後の達成感を守りたい方に</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="cta">
+  <h2>先着100名に<br />無料サンプルを提供予定</h2>
+  <p>事前登録していただいた方に、プロトタイプのフィードバック募集をお送りします。</p>
+  <div class="cta-form">
+    <input class="cta-input" type="email" placeholder="メールアドレスを入力" id="emailInput" />
+    <button class="cta-btn" onclick="register()">登録する →</button>
+  </div>
+  <div class="cta-note">スパムなし。いつでも解除できます。</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 こぼれん盆 — 配膳時のストレスをゼロにするプロダクト</p>
+  <p style="margin-top:6px;">プロトタイプ v1 | フィードバック歓迎</p>
+</footer>
+
+<div class="toast" id="toast">✅ 登録しました！ご連絡をお待ちください。</div>
+
+<script>
+  // Scroll animation
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // CTA scroll
+  function scrollToCta() {
+    document.getElementById('cta').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Register
+  function register() {
+    const email = document.getElementById('emailInput').value.trim();
+    if (!email || !email.includes('@')) {
+      document.getElementById('emailInput').style.outline = '2px solid #ff6b6b';
+      setTimeout(() => document.getElementById('emailInput').style.outline = '', 1500);
+      return;
+    }
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    document.getElementById('emailInput').value = '';
+    setTimeout(() => toast.classList.remove('show'), 3500);
+  }
+
+  // Enter key for register
+  document.getElementById('emailInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') register();
+  });
+</script>
+</body>
+</html>
