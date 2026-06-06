@@ -34,6 +34,7 @@
       line-height: 1.7;
       font-size: 16px;
       overflow-x: hidden;
+      padding-bottom: 72px; /* space for sticky bar */
     }
     img { max-width: 100%; display: block; }
     a { color: inherit; text-decoration: none; }
@@ -138,7 +139,7 @@
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
     }
     .btn-primary {
       background: var(--primary);
@@ -149,8 +150,13 @@
       font-size: 1rem;
       transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
       box-shadow: 0 4px 16px rgba(232, 98, 42, 0.3);
+      animation: ctaPulse 3s infinite;
     }
-    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(232, 98, 42, 0.4); }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(232, 98, 42, 0.4); animation: none; }
+    @keyframes ctaPulse {
+      0%, 100% { box-shadow: 0 4px 16px rgba(232, 98, 42, 0.3); }
+      50% { box-shadow: 0 4px 28px rgba(232, 98, 42, 0.65); }
+    }
     .btn-secondary {
       background: transparent;
       color: var(--text);
@@ -168,6 +174,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      margin-bottom: 12px;
     }
     .seats-bar-wrap {
       flex: 1;
@@ -190,6 +197,26 @@
       white-space: nowrap;
     }
     .seats-label strong { color: var(--primary); }
+
+    /* ===== LIVE BADGE (NEW V3) ===== */
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .live-dot {
+      width: 8px; height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: livePulse 2s infinite;
+    }
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+      50% { opacity: 0.8; box-shadow: 0 0 0 5px rgba(34,197,94,0); }
+    }
 
     /* ===== SVG ANIMATION AREA ===== */
     .hero-visual {
@@ -224,6 +251,53 @@
     .ba-label.before { background: #fee2e2; color: #dc2626; }
     .ba-label.after  { background: #dcfce7; color: #16a34a; }
     .ba-svg { width: 100px; height: 120px; }
+
+    /* ===== STATS BAR (NEW V3) ===== */
+    .stats-bar {
+      background: var(--white);
+      border-top: 1px solid var(--bg-alt);
+      border-bottom: 1px solid var(--bg-alt);
+      padding: 24px;
+    }
+    .stats-bar-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 12px 40px;
+      position: relative;
+    }
+    .stat-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 20%;
+      height: 60%;
+      width: 1px;
+      background: var(--bg-alt);
+    }
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--primary);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
 
     /* ===== SECTION COMMON ===== */
     .section {
@@ -517,7 +591,7 @@
       border: 2px solid rgba(255,255,255,0.3);
       border-radius: var(--radius);
       padding: 20px 40px;
-      margin-bottom: 40px;
+      margin-bottom: 16px;
       backdrop-filter: blur(4px);
     }
     .cta-counter-num {
@@ -532,6 +606,27 @@
       color: rgba(255,255,255,0.8);
       margin-top: 4px;
     }
+
+    /* ===== RECENT REG NOTICE (NEW V3) ===== */
+    .cta-urgency {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .cta-urgency strong { color: rgba(255,255,255,1); font-weight: 700; }
+    .urgency-flash {
+      display: inline-block;
+      animation: urgencyFlash 2s ease infinite;
+    }
+    @keyframes urgencyFlash {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
     .cta-form {
       display: flex;
       gap: 12px;
@@ -550,10 +645,10 @@
       font-size: 1rem;
       font-family: inherit;
       outline: none;
-      transition: border-color var(--transition), background var(--transition);
+      transition: border-color var(--transition), background var(--transition), transform var(--transition);
     }
     .cta-input::placeholder { color: rgba(255,255,255,0.6); }
-    .cta-input:focus { border-color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.2); }
+    .cta-input:focus { border-color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.22); transform: scale(1.02); }
     .cta-btn {
       background: var(--white);
       color: var(--primary);
@@ -578,9 +673,9 @@
     /* ===== TOAST ===== */
     .toast {
       position: fixed;
-      bottom: 32px;
+      bottom: 96px;
       left: 50%;
-      transform: translateX(-50%) translateY(80px);
+      transform: translateX(-50%) translateY(60px);
       background: var(--text);
       color: var(--white);
       padding: 14px 28px;
@@ -611,6 +706,159 @@
     .footer a { color: rgba(255,255,255,0.7); text-decoration: underline; text-underline-offset: 3px; }
     .footer a:hover { color: var(--white); }
 
+    /* ===== STICKY BOTTOM BAR (NEW V3) ===== */
+    .sticky-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      background: var(--white);
+      border-top: 2px solid var(--bg-alt);
+      padding: 12px 24px;
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.1);
+    }
+    .sticky-bar.show { transform: translateY(0); }
+    .sticky-bar-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .sticky-bar-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .sticky-bar-text {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .sticky-bar-text strong { color: var(--primary); }
+    .sticky-bar-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .sticky-seats-bar {
+      height: 4px;
+      background: var(--bg-alt);
+      border-radius: 100px;
+      overflow: hidden;
+      width: 100px;
+      margin-top: 4px;
+    }
+    .sticky-seats-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 100px;
+      transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+      width: 0%;
+    }
+    .sticky-bar-btn {
+      background: var(--primary);
+      color: var(--white);
+      padding: 12px 24px;
+      border-radius: 100px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+      box-shadow: 0 4px 16px rgba(232, 98, 42, 0.3);
+      animation: ctaPulse 3s infinite;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .sticky-bar-btn:hover { background: var(--primary-dark); transform: translateY(-1px); animation: none; }
+
+    /* ===== SHARE MODAL (NEW V3) ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .modal-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 40px 32px;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      transform: scale(0.9) translateY(20px);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+    }
+    .modal-overlay.show .modal {
+      transform: scale(1) translateY(0);
+    }
+    .modal-emoji { font-size: 3.5rem; margin-bottom: 16px; display: block; line-height: 1; }
+    .modal h3 {
+      font-size: 1.4rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .modal-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      line-height: 1.7;
+    }
+    .share-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .share-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 24px;
+      border-radius: 100px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: transform var(--transition), opacity var(--transition);
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+    }
+    .share-btn:hover { transform: translateY(-2px); opacity: 0.9; }
+    .share-btn-line { background: #06C755; color: white; }
+    .share-btn-x    { background: #000000; color: white; }
+    .share-btn-copy { background: var(--bg-alt); color: var(--text); border: 2px solid transparent; }
+    .share-btn-copy.copied { border-color: #16a34a; color: #16a34a; }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      padding: 4px;
+      font-family: inherit;
+    }
+    .modal-close:hover { color: var(--text); }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 640px) {
       .hero {
@@ -630,10 +878,15 @@
       .cta-form { flex-direction: column; }
       .cta-input, .cta-btn { width: 100%; border-radius: var(--radius-sm); }
       .ba-svg { width: 80px; height: 96px; }
+      .stat-item { padding: 10px 20px; }
+      .stat-num { font-size: 1.5rem; }
+      .sticky-bar-sub { display: none; }
+      .sticky-seats-bar { display: none; }
     }
     @media (max-width: 768px) {
       .voices-grid { grid-template-columns: 1fr; }
       .target-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-bar-inner { gap: 0; }
     }
   </style>
 </head>
@@ -648,7 +901,7 @@
 </nav>
 
 <!-- ===== HERO ===== -->
-<section class="section" style="padding-top: 0; padding-bottom: 0;">
+<section class="section" style="padding-top: 0; padding-bottom: 0;" id="hero">
   <div class="hero">
     <div class="hero-content">
       <div class="hero-badge fade-up">
@@ -671,6 +924,10 @@
         </div>
         <span class="seats-label">残り <strong id="heroSeatNum">—</strong> / 100 席</span>
       </div>
+      <div class="live-badge fade-up" style="transition-delay: 0.5s;">
+        <span class="live-dot"></span>
+        今 <strong id="liveViewers" style="margin: 0 3px; color: var(--text);">—</strong> 人がこのページを見ています
+      </div>
     </div>
 
     <div class="hero-visual fade-up" style="transition-delay: 0.2s;">
@@ -679,17 +936,12 @@
         <div class="ba-card">
           <span class="ba-label before">BEFORE</span>
           <svg class="ba-svg" id="svgBefore" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Tray -->
             <rect x="10" y="85" width="80" height="10" rx="3" fill="#c9bfaa"/>
-            <!-- Bowl group (will be rotated by JS) -->
             <g id="bowlBefore">
-              <!-- Bowl body -->
               <ellipse cx="50" cy="72" rx="28" ry="10" fill="#8B6F47"/>
               <path d="M22 72 Q24 58 50 55 Q76 58 78 72 Z" fill="#A0825A"/>
-              <!-- Soup surface -->
               <ellipse cx="50" cy="72" rx="26" ry="8.5" fill="#E8B84B" opacity="0.9"/>
             </g>
-            <!-- Drip drops (animated by JS) -->
             <circle id="drop1" cx="35" cy="75" r="4" fill="#E8B84B" opacity="0"/>
             <circle id="drop2" cx="65" cy="73" r="3.5" fill="#E8B84B" opacity="0"/>
             <circle id="drop3" cx="48" cy="76" r="3" fill="#E8B84B" opacity="0"/>
@@ -699,17 +951,13 @@
         <div class="ba-card">
           <span class="ba-label after">AFTER</span>
           <svg class="ba-svg" id="svgAfter" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Tray with ring holder -->
             <rect x="10" y="85" width="80" height="10" rx="3" fill="#c9bfaa"/>
-            <!-- Ring holder -->
             <circle cx="50" cy="80" r="22" fill="none" stroke="#e8622a" stroke-width="3" opacity="0.5"/>
-            <!-- Bowl group (slight wiggle via JS) -->
             <g id="bowlAfter">
               <ellipse cx="50" cy="72" rx="28" ry="10" fill="#8B6F47"/>
               <path d="M22 72 Q24 58 50 55 Q76 58 78 72 Z" fill="#A0825A"/>
               <ellipse cx="50" cy="72" rx="26" ry="8.5" fill="#E8B84B" opacity="0.9"/>
             </g>
-            <!-- Check mark -->
             <g id="checkMark">
               <circle cx="78" cy="32" r="14" fill="#16a34a"/>
               <path d="M71 32 L76 37 L85 27" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -720,6 +968,28 @@
     </div>
   </div>
 </section>
+
+<!-- ===== STATS BAR (NEW V3) ===== -->
+<div class="stats-bar">
+  <div class="stats-bar-inner">
+    <div class="stat-item fade-up">
+      <span class="stat-num">92<small style="font-size:1.1rem">%</small><small style="font-size:1.1rem">減</small></span>
+      <span class="stat-label">液体流出量（歩行時）</span>
+    </div>
+    <div class="stat-item fade-up" style="transition-delay:0.1s;">
+      <span class="stat-num">100<small style="font-size:1.1rem">名</small></span>
+      <span class="stat-label">無料サンプル枠（先着）</span>
+    </div>
+    <div class="stat-item fade-up" style="transition-delay:0.2s;">
+      <span class="stat-num">3<small style="font-size:1.1rem">ステップ</small></span>
+      <span class="stat-label">置く・持つ・置く — それだけ</span>
+    </div>
+    <div class="stat-item fade-up" style="transition-delay:0.3s;">
+      <span class="stat-num">10〜18<small style="font-size:1.1rem">cm</small></span>
+      <span class="stat-label">対応椀サイズ（3段階調整）</span>
+    </div>
+  </div>
+</div>
 
 <!-- ===== PROBLEM ===== -->
 <section class="section section-alt">
@@ -965,6 +1235,10 @@
       <span class="cta-counter-num" id="ctaSeatNum">—</span>
       <span class="cta-counter-label">残り席数 / 100名</span>
     </div>
+    <p class="cta-urgency">
+      <span class="urgency-flash">⚡</span>
+      過去24時間で <strong id="recentReg">—</strong> 名が登録しました
+    </p>
     <form class="cta-form" id="ctaForm" novalidate>
       <input
         class="cta-input"
@@ -988,6 +1262,43 @@
   <p>フィードバック歓迎 / <a href="mailto:contact@koborenu-bon.jp">contact@koborenu-bon.jp</a></p>
 </footer>
 
+<!-- ===== STICKY BOTTOM BAR (NEW V3) ===== -->
+<div class="sticky-bar" id="stickyBar">
+  <div class="sticky-bar-inner">
+    <div class="sticky-bar-left">
+      <span class="sticky-bar-text">残り <strong id="stickySeats">—</strong> / 100席</span>
+      <span class="sticky-bar-sub">無料サンプル · 先着限定</span>
+      <div class="sticky-seats-bar">
+        <div class="sticky-seats-fill" id="stickyBarFill"></div>
+      </div>
+    </div>
+    <a href="#cta" class="sticky-bar-btn" id="stickyBarBtn">今すぐ無料登録 →</a>
+  </div>
+</div>
+
+<!-- ===== SHARE MODAL (NEW V3) ===== -->
+<div class="modal-overlay" id="shareModal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle">
+  <div class="modal">
+    <span class="modal-emoji" aria-hidden="true">🎉</span>
+    <h3 id="shareModalTitle">登録完了！ありがとうございます</h3>
+    <p class="modal-sub">サンプル完成時に最初にご連絡します。<br />友達にシェアして一緒に待ちませんか？</p>
+    <div class="share-btns">
+      <button class="share-btn share-btn-line" id="shareLineBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+        LINEでシェアする
+      </button>
+      <button class="share-btn share-btn-x" id="shareXBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        X (Twitter) でシェアする
+      </button>
+      <button class="share-btn share-btn-copy" id="shareCopyBtn">
+        📋 リンクをコピーする
+      </button>
+    </div>
+    <button class="modal-close" id="shareModalClose">あとでシェアする</button>
+  </div>
+</div>
+
 <!-- Toast notification -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -996,11 +1307,14 @@
 (function () {
   'use strict';
 
-  /* ── Seats counter ─────────────────────────────────── */
+  /* ── Constants ─────────────────────────────────────── */
   const SEATS_TOTAL = 100;
   const SEATS_MIN   = 30;
   const LS_KEY      = 'koborenu_seats';
+  const PAGE_URL    = 'https://s23b3057rh-blip.github.io/koborenu-bon/';
+  const SHARE_TEXT  = '汁物がこぼれないトレー「こぼれん盆」先着100名に無料サンプル配布中。毎日の配膳がもっと安心になる。';
 
+  /* ── Seats counter ─────────────────────────────────── */
   function getStoredSeats() {
     try {
       const stored = localStorage.getItem(LS_KEY);
@@ -1009,7 +1323,6 @@
         if (!isNaN(val) && val >= SEATS_MIN && val <= SEATS_TOTAL) return val;
       }
     } catch (_) {}
-    // First visit: randomise 68–75
     return Math.floor(Math.random() * 8) + 68;
   }
 
@@ -1017,7 +1330,6 @@
     try { localStorage.setItem(LS_KEY, String(n)); } catch (_) {}
   }
 
-  // Each page load: maybe decrease by 1 with 40% chance (simulates organic sign-ups)
   let currentSeats = getStoredSeats();
   if (Math.random() < 0.4 && currentSeats > SEATS_MIN) {
     currentSeats -= 1;
@@ -1025,28 +1337,29 @@
   }
 
   function setSeatsUI(n) {
-    const heroEl = document.getElementById('heroSeatNum');
-    const ctaEl  = document.getElementById('ctaSeatNum');
-    const barEl  = document.getElementById('heroBarFill');
-    if (heroEl) heroEl.textContent = n;
-    if (ctaEl)  ctaEl.textContent  = n;
-    if (barEl)  barEl.style.width  = ((n / SEATS_TOTAL) * 100) + '%';
+    const heroEl   = document.getElementById('heroSeatNum');
+    const ctaEl    = document.getElementById('ctaSeatNum');
+    const stickyEl = document.getElementById('stickySeats');
+    const barEl    = document.getElementById('heroBarFill');
+    const stickyBarFillEl = document.getElementById('stickyBarFill');
+    const pct = (n / SEATS_TOTAL) * 100;
+    if (heroEl)          heroEl.textContent  = n;
+    if (ctaEl)           ctaEl.textContent   = n;
+    if (stickyEl)        stickyEl.textContent = n;
+    if (barEl)           barEl.style.width   = pct + '%';
+    if (stickyBarFillEl) stickyBarFillEl.style.width = pct + '%';
   }
 
-  // Animate counter from SEATS_TOTAL → currentSeats on load
   function animateCounter() {
     const start = SEATS_TOTAL;
     const end   = currentSeats;
-    const dur   = 1400; // ms
+    const dur   = 1400;
     const startTime = performance.now();
-
     function tick(now) {
-      const elapsed = now - startTime;
+      const elapsed  = now - startTime;
       const progress = Math.min(elapsed / dur, 1);
-      // ease-out cubic
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const value = Math.round(start - (start - end) * eased);
-      setSeatsUI(value);
+      const eased    = 1 - Math.pow(1 - progress, 3);
+      setSeatsUI(Math.round(start - (start - end) * eased));
       if (progress < 1) requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
@@ -1056,22 +1369,40 @@
     setTimeout(animateCounter, 600);
   });
 
-  /* ── SVG Animations (requestAnimationFrame) ─────────── */
+  /* ── Live viewer count (NEW V3) ─────────────────────── */
+  function setLiveViewers() {
+    const el = document.getElementById('liveViewers');
+    if (!el) return;
+    const base = Math.floor(Math.random() * 6) + 4; // 4–9
+    el.textContent = base;
+  }
 
-  // BEFORE: bowl wobbles, drops fall periodically
+  setLiveViewers();
+  setInterval(function () {
+    const el = document.getElementById('liveViewers');
+    if (!el) return;
+    const current = parseInt(el.textContent, 10) || 6;
+    const delta   = Math.random() < 0.5 ? 1 : -1;
+    const next    = Math.max(3, Math.min(12, current + delta));
+    el.textContent = next;
+  }, 7000);
+
+  /* ── Recent registrations (NEW V3) ──────────────────── */
+  (function setRecentReg() {
+    const el = document.getElementById('recentReg');
+    if (el) el.textContent = Math.floor(Math.random() * 4) + 2; // 2–5
+  })();
+
+  /* ── SVG Animations ─────────────────────────────────── */
   const bowlBefore = document.getElementById('bowlBefore');
   const drops = [
     document.getElementById('drop1'),
     document.getElementById('drop2'),
     document.getElementById('drop3'),
   ];
-
-  // drop state
   const dropState = drops.map(function (_, i) {
     return {
-      active: false,
-      y: 0,
-      opacity: 0,
+      active: false, y: 0, opacity: 0,
       delay: i * 700,
       baseX: [35, 65, 48][i],
       baseY: [75, 73, 76][i],
@@ -1080,62 +1411,46 @@
   });
 
   let beforeStartTime = null;
-
   function animateBefore(ts) {
     if (!beforeStartTime) beforeStartTime = ts;
     const elapsed = ts - beforeStartTime;
-
-    // Bowl wobble: sinusoidal rotation ±8deg
     if (bowlBefore) {
       const angle = Math.sin(elapsed / 500) * 8;
       bowlBefore.setAttribute('transform', 'rotate(' + angle + ' 50 72)');
     }
-
-    // Drops
     dropState.forEach(function (state, i) {
       const t = (elapsed - state.delay) % 2000;
-      if (t < 0) {
-        // not started yet
-        if (drops[i]) drops[i].setAttribute('opacity', '0');
-        return;
-      }
+      if (t < 0) { if (drops[i]) drops[i].setAttribute('opacity', '0'); return; }
       if (t < 800) {
-        // falling phase
         const progress = t / 800;
-        const y = state.baseY + progress * 28;
-        const opacity = progress < 0.2 ? progress / 0.2 : progress > 0.7 ? (1 - (progress - 0.7) / 0.3) : 1;
+        const y        = state.baseY + progress * 28;
+        const opacity  = progress < 0.2 ? progress / 0.2 : progress > 0.7 ? (1 - (progress - 0.7) / 0.3) : 1;
         if (drops[i]) {
-          drops[i].setAttribute('opacity', String(opacity.toFixed(2)));
-          drops[i].setAttribute('cy', String(y.toFixed(1)));
+          drops[i].setAttribute('opacity', opacity.toFixed(2));
+          drops[i].setAttribute('cy', y.toFixed(1));
         }
       } else {
         if (drops[i]) drops[i].setAttribute('opacity', '0');
       }
     });
-
     requestAnimationFrame(animateBefore);
   }
   requestAnimationFrame(animateBefore);
 
-  // AFTER: bowl gentle micro-wiggle, no drops
   const bowlAfter = document.getElementById('bowlAfter');
   let afterStartTime = null;
-
   function animateAfter(ts) {
     if (!afterStartTime) afterStartTime = ts;
     const elapsed = ts - afterStartTime;
-
     if (bowlAfter) {
-      // tiny 1deg wiggle
       const angle = Math.sin(elapsed / 700) * 1.2;
       bowlAfter.setAttribute('transform', 'rotate(' + angle + ' 50 72)');
     }
-
     requestAnimationFrame(animateAfter);
   }
   requestAnimationFrame(animateAfter);
 
-  /* ── Scroll fade-up (IntersectionObserver) ──────────── */
+  /* ── Scroll fade-up ─────────────────────────────────── */
   const fadeEls = document.querySelectorAll('.fade-up');
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(function (entries) {
@@ -1151,22 +1466,67 @@
     fadeEls.forEach(function (el) { el.classList.add('visible'); });
   }
 
+  /* ── Sticky bar (NEW V3) ─────────────────────────────── */
+  var heroSection = document.getElementById('hero');
+  var stickyBar   = document.getElementById('stickyBar');
+  var ctaSection  = document.getElementById('cta');
+
+  if (heroSection && stickyBar && 'IntersectionObserver' in window) {
+    var heroObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) {
+          stickyBar.classList.add('show');
+        } else {
+          stickyBar.classList.remove('show');
+        }
+      });
+    }, { threshold: 0.1 });
+    heroObserver.observe(heroSection);
+
+    // Hide sticky bar when CTA section is visible
+    var ctaObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          stickyBar.classList.remove('show');
+        }
+      });
+    }, { threshold: 0.3 });
+    if (ctaSection) ctaObserver.observe(ctaSection);
+  }
+
+  /* ── Sticky bar btn smooth focus (NEW V3) ─────────────── */
+  var stickyBarBtn = document.getElementById('stickyBarBtn');
+  if (stickyBarBtn) {
+    stickyBarBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      var target = document.getElementById('cta');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(function () {
+          var input = document.getElementById('emailInput');
+          if (input) {
+            input.focus();
+            input.style.transition = 'border-color 0.3s ease, background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease';
+            input.style.boxShadow = '0 0 0 4px rgba(255,255,255,0.4)';
+            setTimeout(function () { input.style.boxShadow = ''; }, 1200);
+          }
+        }, 600);
+      }
+    });
+  }
+
   /* ── FAQ accordion ──────────────────────────────────── */
   document.querySelectorAll('.faq-item').forEach(function (item) {
-    const btn  = item.querySelector('.faq-question');
-    const body = item.querySelector('.faq-body');
-    const inner = item.querySelector('.faq-body-inner');
-
+    var btn   = item.querySelector('.faq-question');
+    var body  = item.querySelector('.faq-body');
+    var inner = item.querySelector('.faq-body-inner');
     btn.addEventListener('click', function () {
-      const isOpen = item.classList.contains('open');
-
-      // Close all
+      var isOpen = item.classList.contains('open');
       document.querySelectorAll('.faq-item.open').forEach(function (openItem) {
         openItem.classList.remove('open');
         openItem.querySelector('.faq-body').style.maxHeight = '0';
         openItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
       });
-
       if (!isOpen) {
         item.classList.add('open');
         body.style.maxHeight = inner.scrollHeight + 40 + 'px';
@@ -1177,57 +1537,123 @@
 
   /* ── Toast helper ───────────────────────────────────── */
   function showToast(msg) {
-    const el = document.getElementById('toast');
+    var el = document.getElementById('toast');
     el.textContent = msg;
     el.classList.add('show');
     setTimeout(function () { el.classList.remove('show'); }, 3500);
   }
 
+  /* ── Share modal (NEW V3) ─────────────────────────────── */
+  var shareModal     = document.getElementById('shareModal');
+  var shareLineBtn   = document.getElementById('shareLineBtn');
+  var shareXBtn      = document.getElementById('shareXBtn');
+  var shareCopyBtn   = document.getElementById('shareCopyBtn');
+  var shareModalClose = document.getElementById('shareModalClose');
+
+  function openShareModal() {
+    if (shareModal) shareModal.classList.add('show');
+  }
+
+  function closeShareModal() {
+    if (shareModal) shareModal.classList.remove('show');
+  }
+
+  if (shareModalClose) {
+    shareModalClose.addEventListener('click', closeShareModal);
+  }
+
+  if (shareModal) {
+    shareModal.addEventListener('click', function (e) {
+      if (e.target === shareModal) closeShareModal();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeShareModal();
+    });
+  }
+
+  if (shareLineBtn) {
+    shareLineBtn.addEventListener('click', function () {
+      var url = 'https://social-plugins.line.me/lineit/share?url=' + encodeURIComponent(PAGE_URL);
+      window.open(url, '_blank', 'noopener,noreferrer,width=600,height=600');
+    });
+  }
+
+  if (shareXBtn) {
+    shareXBtn.addEventListener('click', function () {
+      var url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(SHARE_TEXT + '\n') + '&url=' + encodeURIComponent(PAGE_URL);
+      window.open(url, '_blank', 'noopener,noreferrer,width=600,height=400');
+    });
+  }
+
+  if (shareCopyBtn) {
+    shareCopyBtn.addEventListener('click', function () {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(PAGE_URL).then(function () {
+          shareCopyBtn.textContent = '✓ コピーしました！';
+          shareCopyBtn.classList.add('copied');
+          setTimeout(function () {
+            shareCopyBtn.textContent = '📋 リンクをコピーする';
+            shareCopyBtn.classList.remove('copied');
+          }, 2000);
+        });
+      } else {
+        // fallback
+        var ta = document.createElement('textarea');
+        ta.value = PAGE_URL;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (_) {}
+        document.body.removeChild(ta);
+        shareCopyBtn.textContent = '✓ コピーしました！';
+        setTimeout(function () { shareCopyBtn.textContent = '📋 リンクをコピーする'; }, 2000);
+      }
+    });
+  }
+
   /* ── Form submit (Formspree) ────────────────────────── */
-  const form       = document.getElementById('ctaForm');
-  const emailInput = document.getElementById('emailInput');
-  const submitBtn  = document.getElementById('submitBtn');
-  const formMsg    = document.getElementById('formMsg');
+  var form       = document.getElementById('ctaForm');
+  var emailInput = document.getElementById('emailInput');
+  var submitBtn  = document.getElementById('submitBtn');
+  var formMsg    = document.getElementById('formMsg');
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    const email = emailInput.value.trim();
+    var email = emailInput.value.trim();
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       formMsg.textContent = '正しいメールアドレスを入力してください。';
       formMsg.className   = 'form-message error';
+      emailInput.focus();
       return;
     }
 
-    submitBtn.disabled   = true;
+    submitBtn.disabled    = true;
     submitBtn.textContent = '送信中…';
-    formMsg.textContent  = '';
-    formMsg.className    = 'form-message';
+    formMsg.textContent   = '';
+    formMsg.className     = 'form-message';
 
     fetch('https://formspree.io/f/REPLACE_WITH_YOUR_ID', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({ email: email }),
     })
     .then(function (res) {
       if (res.ok) {
-        // Success
-        emailInput.value     = '';
-        formMsg.textContent  = '登録が完了しました！サンプル完成時にご連絡します。';
-        formMsg.className    = 'form-message';
-        showToast('登録完了！ありがとうございます 🎉');
-
-        // Decrement counter
+        emailInput.value      = '';
+        formMsg.textContent   = '登録が完了しました！サンプル完成時にご連絡します。';
+        formMsg.className     = 'form-message';
+        showToast('登録完了！ありがとうございます');
         if (currentSeats > SEATS_MIN) {
           currentSeats -= 1;
           saveSeats(currentSeats);
           setSeatsUI(currentSeats);
         }
-        submitBtn.disabled   = false;
+        submitBtn.disabled    = false;
         submitBtn.textContent = '登録する →';
+        // Open share modal after short delay
+        setTimeout(openShareModal, 800);
       } else {
         return res.json().then(function (data) {
           throw new Error((data && data.errors && data.errors[0] && data.errors[0].message) || '送信に失敗しました。');
@@ -1235,9 +1661,9 @@
       }
     })
     .catch(function (err) {
-      formMsg.textContent  = err.message || '通信エラーが発生しました。もう一度お試しください。';
-      formMsg.className    = 'form-message error';
-      submitBtn.disabled   = false;
+      formMsg.textContent   = err.message || '通信エラーが発生しました。もう一度お試しください。';
+      formMsg.className     = 'form-message error';
+      submitBtn.disabled    = false;
       submitBtn.textContent = '登録する →';
     });
   });
